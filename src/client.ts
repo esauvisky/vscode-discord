@@ -39,9 +39,10 @@ export class Client implements Disposable {
 			const applicationIds = new Map();
 
 			applicationIds.set('Code', '782685898163617802');
+			applicationIds.set('VSCode ‎‍💻', '822102697758031882');
 			applicationIds.set('Visual Studio Code', '810516608442695700');
 
-			const match = /(Code|Visual Studio Code)/i.exec(appName);
+			const match = /(Code|Visual Studio Code|VSCode.+)/i.exec(appName);
 
 			let clientId = id;
 

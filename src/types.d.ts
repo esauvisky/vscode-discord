@@ -15,12 +15,14 @@ interface IExtensionConfig {
 	largeImage: string;
 	largeImageIdle: string;
 	smallImage: string;
+	funnyMessages: string;
 	workspaceElapsedTime: boolean;
 	showProblems: boolean;
 	problemsText: string;
 	ignoreWorkspaces: string[];
 	checkIdle: boolean;
 	idleTimeout: number;
+	disconnectTimeout: number;
 	idleText: string;
 	appName: string;
 }

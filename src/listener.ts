@@ -29,7 +29,7 @@ export class Listener implements Disposable {
 		const changeWindowState = window.onDidChangeWindowState;
 		const configChange = workspace.onDidChangeConfiguration;
 
-		const { enabled, showProblems, checkIdle } = getConfig();
+		const { enabled, showProblems } = getConfig();
 
 		if (enabled) {
 			const onFileSwitch = fileSwitch((e: TextEditor | undefined) => this.activity.onFileSwitch(e!));
@@ -44,9 +44,7 @@ export class Listener implements Disposable {
 				this.disposables.push(diagnostictsChange(() => this.activity.onDiagnosticsChange()));
 			}
 
-			if (checkIdle) {
-				this.disposables.push(changeWindowState((e: WindowState) => this.activity.onChangeWindowState(e)));
-			}
+			this.disposables.push(changeWindowState((e: WindowState) => this.activity.onChangeWindowState(e)));
 		}
 	}
 

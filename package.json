@@ -1,10 +1,10 @@
 {
 	"name": "vscord",
 	"displayName": "Discord Rich Presence",
-	"version": "3.2.3",
+	"version": "3.2.4",
 	"description": "😎 Another awesome and fully customizable VS Code extension to get Discord Rich Presence integration.",
 	"main": "dist/extension.js",
-	"private": true,
+	"private": "false",
 	"icon": "assets/icon.png",
 	"galleryBanner": {
 		"color": "#223037",
@@ -139,7 +139,8 @@
 					"type": "string",
 					"enum": [
 						"Code",
-						"Visual Studio Code"
+						"Visual Studio Code",
+						"VSCode ‎‍💻"
 					],
 					"default": "Code",
 					"description": "Choose the name you want the application to use."
@@ -204,10 +205,30 @@
 					"default": "Idling",
 					"description": "Custom string for the largeImageText section of the rich presence when idling."
 				},
-				"VSCord.smallImage": {
-					"type": "string",
-					"default": "{appname}",
-					"description": "Custom string for the smallImageText section of the rich presence\n\t- {appname} will get replaced with the current Visual Studio Code version."
+				"VSCord.funnyMessages": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"Now with more than 90% less regressions.",
+						"Now with less than 90% more regressions.",
+						"Don't get MAD. Get Pokemod.",
+						"It's not a dream... the release is real!",
+						"Soon™",
+						"Made in USSR.",
+						"With a name like Pokemod, it has to be good.",
+						"Pokemod: Once you have it, you get hooked.",
+						"Pokemod: When 2nd best isn't good enough.",
+						"Pokemod: Toggles for the troubled trainer",
+						"Pokemod: Toggle your troubles away",
+						"Anyone gotten a strike? Multiple, in bowling!",
+						"Injects in less than 45 minutes.",
+						"Best thing you can do with your clothes on.",
+						"Would rather wait for the official source.",
+						"We are crazy, and almost harmless."
+					],
+					"description": "List of messages to pick at random and show when hovering the small icon."
 				},
 				"VSCord.workspaceElapsedTime": {
 					"type": "boolean",
@@ -239,8 +260,13 @@
 				},
 				"VSCord.idleTimeout": {
 					"type": "number",
-					"default": 60,
-					"description": "How long the window should be unfocused (in seconds) to either disable rich presence or display you as idle."
+					"default": 300,
+					"description": "How long the window should be unfocused (in seconds) to count as Idle and/or switch small icon text."
+				},
+				"VSCord.disconnectTimeout": {
+					"type": "number",
+					"default": 1800,
+					"description": "How long the window should be unfocused (in seconds) to disable rich presence."
 				},
 				"VSCord.idleText": {
 					"type": "string",
@@ -249,5 +275,10 @@
 				}
 			}
 		}
+	},
+	"__metadata": {
+		"id": "20675c06-f272-4cc8-8611-83ebb5583c5a",
+		"publisherDisplayName": "LeonardSSH",
+		"publisherId": "2c34273e-24b8-499a-b859-8e27e48decc5"
 	}
 }

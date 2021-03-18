@@ -11,7 +11,7 @@ const client: Client = new Client(getConfig(), statusBarIcon);
 
 let loginTimeout: NodeJS.Timer | undefined = undefined;
 
-const extensionName = process.env.EXTENSION_NAME || 'dev.vscord';
+const extensionName = process.env.EXTENSION_NAME || 'dev.vscord.pokemod';
 const extensionVersion = process.env.EXTENSION_VERSION || '0.0.0';
 
 export const activate = async (ctx: ExtensionContext) => {

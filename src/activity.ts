@@ -36,10 +36,11 @@ const empty = '\u200b\u200b';
 const enum defaultIcons {
 	standard_vscode = 'idle-vscode',
 	standard_vscode_insiders = 'idle-vscode-insiders',
-	idle = 'idle'
+	idle = 'pokemod'
 }
 
 let idleCheckTimeout: NodeJS.Timer | undefined = undefined;
+let disconnectCheckTimeout: NodeJS.Timer | undefined = undefined;
 
 export function resolveIcon(document: TextDocument) {
 	const filename = basename(document.fileName);
@@ -73,10 +74,12 @@ export class Activity implements Disposable {
 
 	private problems = 0;
 
+	private disconnected = false;
+
 	public constructor(private readonly client: Client) {}
 
 	public async init() {
-		const { workspaceElapsedTime, largeImageIdle, detailsIdle, lowerDetailsIdle, smallImage } = getConfig();
+		const { workspaceElapsedTime, largeImageIdle, detailsIdle, lowerDetailsIdle, funnyMessages } = getConfig();
 
 		if (workspaceElapsedTime) {
 			this.presence.startTimestamp = Date.now();
@@ -88,12 +91,8 @@ export class Activity implements Disposable {
 			? defaultIcons.standard_vscode_insiders
 			: defaultIcons.standard_vscode;
 		this.presence.largeImageText = largeImageIdle;
-		this.presence.smallImageKey = this.debugging
-			? 'debug'
-			: env.appName.includes('Insiders')
-			? 'vscode-insiders'
-			: 'vscode';
-		this.presence.smallImageText = smallImage.replace('{appname}', env.appName);
+		this.presence.smallImageKey = 'pokemod';
+		this.presence.smallImageText = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
 
 		await this.update();
 	}
@@ -183,21 +182,36 @@ export class Activity implements Disposable {
 	}
 
 	public async onChangeWindowState({ focused }: WindowState) {
-		const { idleTimeout } = getConfig();
+		const { checkIdle, idleTimeout, disconnectTimeout } = getConfig();
 
 		if (focused) {
-			if (idleCheckTimeout) {
-				clearTimeout(idleCheckTimeout);
+			if (disconnectCheckTimeout) {
+				clearTimeout(disconnectCheckTimeout);
+			} else if (this.disconnected) {
+				await commands.executeCommand('rpc.reconnect');
+				await this.idle(true);
 			}
 
-			return this.idle(false);
+			if (checkIdle && idleCheckTimeout) {
+				clearTimeout(idleCheckTimeout);
+			}
+			await this.idle(false);
+
+			return;
 		}
 
-		idleCheckTimeout = setTimeout(async () => {
-			await this.idle(true);
+		if (checkIdle) {
+			idleCheckTimeout = setTimeout(async () => {
+				await this.idle(true);
+				idleCheckTimeout = undefined;
+			}, idleTimeout * 1000);
+		}
 
-			idleCheckTimeout = undefined;
-		}, idleTimeout * 1000);
+		disconnectCheckTimeout = setTimeout(async () => {
+			await commands.executeCommand('rpc.disconnect');
+			disconnectCheckTimeout = undefined;
+			this.disconnected = true;
+		}, disconnectTimeout * 1000);
 	}
 
 	public toggleDebug() {
@@ -247,17 +261,12 @@ export class Activity implements Disposable {
 		this.viewing = false;
 	}
 
-	public async idle(status: boolean) {
-		const { smallImage, idleText } = getConfig();
+	public async idle(updateMessage: boolean) {
+		const { funnyMessages } = getConfig();
 
-		this.presence.smallImageKey = status
-			? defaultIcons.idle
-			: this.debugging
-			? 'debug'
-			: env.appName.includes('Insiders')
-			? 'vscode-insiders'
-			: 'vscode';
-		this.presence.smallImageText = status ? idleText : smallImage.replace('{appname}', env.appName);
+		if (updateMessage) {
+			this.presence.smallImageText = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+		}
 		await this.update();
 	}
 
